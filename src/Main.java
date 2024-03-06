@@ -1,6 +1,11 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Objects;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.io.*;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,9 +22,11 @@ public class Main {
         String outputFileName = outputFileName();
 
         // Create an input file, check and confirm a password and store the hashed password inside of input file
+        passwordChecking();
 
         // Write all the required results in output file
         writeOutputFile(outputFileName,inputFileName,name,numbers);
+
 
     }
 
@@ -85,6 +92,7 @@ public class Main {
                     numberOne = Integer.parseInt(num1.replace(",", ""));
                     isValidNum1 = true;
                     System.out.println("Your FIRST number " + "<" + numberOne + ">" + " is valid.");
+
                 } catch (NumberFormatException e) {
                     System.out.println("The FIRST number is out or bound, please try again.");
                 }
@@ -184,6 +192,11 @@ public class Main {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,255}$";
         Pattern pattern = Pattern.compile(regex);
 
+        //hashing stuff
+        byte[] salt = new byte[16];
+        byte[] passHash;
+        byte[] pass2Hash = new byte[0];
+
         while (!isValidPS) {
             System.out.println("""
                     ================================================================
@@ -196,15 +209,90 @@ public class Main {
                     ---------------------------------------------------------------""");
             Scanner passWordScanner = new Scanner(System.in);
             password = passWordScanner.nextLine();
+
             Matcher passwordMatch = pattern.matcher(password);
             boolean isPasswordMatch = passwordMatch.matches();
-
             if (isPasswordMatch) {
                 isValidPS = true;
                 System.out.println("Your password is valid.");
+
+                // Hashing password
+                try {
+                    // Salt
+                    SecureRandom random = new SecureRandom();
+                    random.nextBytes(salt);
+
+                    // set up PBKDF2
+                    KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+                    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+
+                    // actual hash
+                    passHash = factory.generateSecret(spec).getEncoded();
+
+                    PrintStream passwordOut = new PrintStream("password.txt");
+                    passwordOut.println(toHex(passHash));
+
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException | FileNotFoundException e) {
+                    // DO something
+                }
+
+                System.out.println("Please re-enter the password:");
+                //Get re-entered password
+                Scanner passWordScanner2 = new Scanner(System.in);
+                String password2 = passWordScanner2.nextLine();
+
+                // Hashing re-entered password
+                try {
+                    // set up PBKDF2
+                    KeySpec spec = new PBEKeySpec(password2.toCharArray(), salt, 65536, 128);
+                    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+
+                    // actual hash
+                    pass2Hash = factory.generateSecret(spec).getEncoded();
+
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    // DO something
+                }
+
+                try {
+                    Scanner scanPassFile = new Scanner(new File("password.txt"));
+                    String passwordFromFile = scanPassFile.nextLine();
+
+                    try {
+                        String pass2String = toHex(pass2Hash);
+                        if (pass2String.equals(passwordFromFile)) {
+                            System.out.println("Passwords match!");
+                        } else {
+                            isValidPS = false;
+                            System.out.println("The passwords do not match. Try again.");
+                        }
+                    } catch (NoSuchAlgorithmException e) {
+                        System.out.println("No such Algorithm Exception.");
+                    }
+
+                } catch (FileNotFoundException e) {
+                    System.out.println("File was not found.");
+                }
+
             } else {
                 System.out.println("Your Password format is invalid.");
             }
+
+        }
+    }
+
+    //Helper method for convert hash to hex
+    private static String toHex(byte[] array) throws NoSuchAlgorithmException
+    {
+        BigInteger bi = new BigInteger(1, array);
+        String hex = bi.toString(16);
+
+        int paddingLength = (array.length * 2) - hex.length();
+        if(paddingLength > 0)
+        {
+            return String.format("%0"  +paddingLength + "d", 0) + hex;
+        }else{
+            return hex;
         }
     }
 
