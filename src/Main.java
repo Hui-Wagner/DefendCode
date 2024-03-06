@@ -15,11 +15,11 @@ public class Main {
         // Store output file name
         String outputFileName = outputFileName();
 
-        // Write in output file
+        // Create an input file, check and confirm a password and store the hashed password inside of input file
+
+        // Write all the required results in output file
         writeOutputFile(outputFileName,inputFileName,name,numbers);
 
-        // Store Password and Write in file
-        // Open the output file and write in
     }
 
     public static String nameChecking() {
@@ -185,7 +185,7 @@ public class Main {
     public static void writeOutputFile(String outputFileName, String inputFileName, String name, int[] numbers) {
 
         try {
-            FileWriter outputFile = new FileWriter(outputFileName + ".txt");  // Specify the file name
+            FileWriter outputFile = new FileWriter(outputFileName + ".txt");
             String[] splitName = name.split(" ");
             String firstName = splitName[0];
             String lastName = splitName[1];
@@ -200,7 +200,7 @@ public class Main {
             outputFile.write("Product of two integer: " + product + "\n");
             outputFile.write("Input file name: " + inputFileName + "\n");
             outputFile.write("Input file content:" + "\n");
-            outputFile.close();  // Always close the file after writing
+            outputFile.close();
             System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
