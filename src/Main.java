@@ -1,4 +1,5 @@
-import java.security.SecureRandom;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,15 +8,15 @@ public class Main {
     public static void main(String[] args) {
         // Store the name that is checked
         String name = nameChecking();
-
         // Store the numbers that are checked
         int[] numbers = numChecking();
-
         // Store input file name
         String inputFileName = inputFileName();
-
         // Store output file name
         String outputFileName = outputFileName();
+
+        // Write in output file
+        writeOutputFile(outputFileName,inputFileName,name,numbers);
 
         // Store Password and Write in file
         // Open the output file and write in
@@ -156,7 +157,7 @@ public class Main {
         return outputFileName;
     }
 
-    public static void handlePassword () {
+    public static void passwordChecking() {
         String password = "";
         boolean isValidPS = false;
 
@@ -179,7 +180,30 @@ public class Main {
                 System.out.println("Your Password format is invalid.");
             }
         }
+    }
 
+    public static void writeOutputFile(String outputFileName, String inputFileName, String name, int[] numbers) {
+
+        try {
+            FileWriter outputFile = new FileWriter(outputFileName + ".txt");  // Specify the file name
+            String[] splitName = name.split(" ");
+            String firstName = splitName[0];
+            String lastName = splitName[1];
+            outputFile.write("First Name: " + firstName + "\n");
+            outputFile.write("Last Name: " + lastName + "\n");
+            outputFile.write("First Integer: " + String.valueOf(numbers[0]) + "\n");
+            outputFile.write("Second Integer: " + String.valueOf(numbers[1])+ "\n");
+            // Sum, Product, Input File Name, Input file contents
+            long sum = numbers[0] + numbers[1];
+            outputFile.write("Sum of two integers: " + sum + "\n");
+            long product = (long) numbers[0] * numbers[1];
+            outputFile.write("Product of two integer: " + product + "\n");
+            outputFile.write("Input file name: " + inputFileName);
+            outputFile.close();  // Always close the file after writing
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+        }
 
     }
 
