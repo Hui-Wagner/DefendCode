@@ -1,5 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,9 +41,10 @@ public class Main {
             String regex = "^[a-zA-Z]{1,50}\\s[a-zA-Z]{1,50}$";
             Pattern pattern = Pattern.compile(regex);
             Matcher nameMatch = pattern.matcher(name);
+            boolean isNameMatch = nameMatch.matches();
 
             // If the pattern matches, prompt the message and store return the name
-            if (nameMatch.matches()) {
+            if (isNameMatch) {
                 isValidName = true;
                 System.out.println("<" + name + ">" + " is a valid name.");
             } else {
@@ -54,7 +56,6 @@ public class Main {
 
 
     public static int[] numChecking() {
-
         String num1 = "";
         String num2 = "";
 
@@ -64,6 +65,9 @@ public class Main {
         int numberOne = 0;
         int numberTwo = 0;
 
+        String regex = "^(-?\\d{1,3}(,\\d{3})*){1,14}$";
+        Pattern pattern = Pattern.compile(regex);
+
         // Keep prompting the dialogue until user enters a valid number
         while (!isValidNum1) {
             System.out.println("""
@@ -72,8 +76,10 @@ public class Main {
                           - Please type your FIRST int value:
                     ---------------------------------------------------------------------------------------------------""");
             Scanner num1Scanner = new Scanner(System.in);
-            if (num1Scanner.hasNext("^(-?\\d{1,3}(,\\d{3})*){1,14}$")) {
-                num1 = num1Scanner.next();
+            num1 = num1Scanner.nextLine();
+            Matcher num1Match = pattern.matcher(num1);
+            boolean isNum1Match = num1Match.matches();
+            if (isNum1Match) {
                 try {
                     // Before parsing in the number into int type, get rid of "," between numbers
                     numberOne = Integer.parseInt(num1.replace(",", ""));
@@ -83,7 +89,7 @@ public class Main {
                     System.out.println("The FIRST number is out or bound, please try again.");
                 }
             } else {
-                System.out.println("The First number is NOT invalid, please try again.");
+                System.out.println("The First number is NOT valid, please try again.");
             }
 
         }
@@ -94,8 +100,11 @@ public class Main {
                           - Please type your SECOND int value:
                     --------------------------------------------""");
             Scanner num2Scanner = new Scanner(System.in);
-            if (num2Scanner.hasNext("^(-?\\d{1,3}(,\\d{3})*){1,14}$")) {
-                num2 = num2Scanner.next();
+            num2 = num2Scanner.nextLine();
+            Matcher num2Match = pattern.matcher(num2);
+            boolean isNum2Match = num2Match.matches();
+
+            if (isNum2Match) {
                 try {
                     // Before parsing in the number into int type, get rid of "," between numbers
                     numberTwo = Integer.parseInt(num2.replace(",", ""));
@@ -115,6 +124,9 @@ public class Main {
         String inputFileName = "";
         boolean isValidInput = false;
 
+        String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$";
+        Pattern pattern = Pattern.compile(regex);
+
         while (!isValidInput) {
             System.out.println("""
                 ============================================================================
@@ -123,8 +135,11 @@ public class Main {
                       - The file name must be shorter than 255 characters.
                 ----------------------------------------------------------------------------""");
             Scanner inputScanner = new Scanner(System.in);
-            if (inputScanner.hasNext("^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$")) {
-                inputFileName = inputScanner.next();
+            inputFileName = inputScanner.nextLine();
+            Matcher inputFileMatch = pattern.matcher(inputFileName);
+            boolean isInputFileMatch = inputFileMatch.matches();
+
+            if (isInputFileMatch) {
                 isValidInput = true;
                 System.out.println(inputFileName + " is a valid INPUT file name.");
             } else {
@@ -138,6 +153,9 @@ public class Main {
         String outputFileName = "";
         boolean isValidOutput = false;
 
+        String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$";
+        Pattern pattern = Pattern.compile(regex);
+
         while (!isValidOutput) {
             System.out.println("""
                 ======================================================================================
@@ -146,8 +164,10 @@ public class Main {
                       - The file name must be shorter than 255 characters.
                 ----------------------------------------------------------------------------""");
             Scanner outputScanner = new Scanner(System.in);
-            if (outputScanner.hasNext("^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$")) {
-                outputFileName = outputScanner.next();
+            outputFileName = outputScanner.nextLine();
+            Matcher inputFileMatch = pattern.matcher(outputFileName);
+            boolean isOutputFileMatch = inputFileMatch.matches();
+            if (isOutputFileMatch) {
                 isValidOutput = true;
                 System.out.println(outputFileName + " is a valid OUTPUT file name.");
             } else {
@@ -161,6 +181,9 @@ public class Main {
         String password = "";
         boolean isValidPS = false;
 
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,255}$";
+        Pattern pattern = Pattern.compile(regex);
+
         while (!isValidPS) {
             System.out.println("""
                     ================================================================
@@ -172,8 +195,11 @@ public class Main {
                           - At least 1 special letter
                     ---------------------------------------------------------------""");
             Scanner passWordScanner = new Scanner(System.in);
-            if (passWordScanner.hasNext("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,255}$")) {
-                password = passWordScanner.next();
+            password = passWordScanner.nextLine();
+            Matcher passwordMatch = pattern.matcher(password);
+            boolean isPasswordMatch = passwordMatch.matches();
+
+            if (isPasswordMatch) {
                 isValidPS = true;
                 System.out.println("Your password is valid.");
             } else {
