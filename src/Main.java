@@ -198,7 +198,8 @@ public class Main {
             outputFile.write("Sum of two integers: " + sum + "\n");
             long product = (long) numbers[0] * numbers[1];
             outputFile.write("Product of two integer: " + product + "\n");
-            outputFile.write("Input file name: " + inputFileName);
+            outputFile.write("Input file name: " + inputFileName + "\n");
+            outputFile.write("Input file content:" + "\n");
             outputFile.close();  // Always close the file after writing
             System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
@@ -206,9 +207,4 @@ public class Main {
         }
 
     }
-
-
-
-
-
 }
