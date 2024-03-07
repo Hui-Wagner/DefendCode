@@ -16,7 +16,19 @@ public class Main {
     private static String inputFileName = "";
     private static File inputFile = new File(inputFileName);
 
+    //Set up for error log
+    private static PrintStream errorLogOut;
+
     public static void main(String[] args) {
+
+        //set up for error log
+        try {
+            errorLogOut = new PrintStream("errorLog.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        errorLogOut.println("================================================================================" + "\n" + "Error log:" + "\n");
+
         // Store the name that is checked
         String name = nameChecking();
         // Store the numbers that are checked
@@ -25,17 +37,17 @@ public class Main {
         String inputFileName = inputFileName();
         // Store output file name
         String outputFileName = outputFileName();
-
         // Store the hashed password and check and confirm with re-entered password
         passwordChecking();
-
         // Write all the required results in output file
         writeOutputFile(outputFileName,inputFileName,name,numbers);
-
 
     }
 
     public static String nameChecking() {
+
+        errorLogOut.println("----------------------------------------------------------------------------" + "\n" + "Name Errors:");
+
         String name = "";
         boolean isValidName = false;
 
@@ -60,6 +72,7 @@ public class Main {
                 isValidName = true;
                 System.out.println("<" + name + ">" + " is a valid name.");
             } else {
+                errorLogOut.println("Invalid input for name: " + name);
                 System.out.println("<" + name + ">" + " is NOT a valid first and last name, please try again.");
             }
         }
@@ -68,6 +81,9 @@ public class Main {
 
 
     public static int[] numChecking() {
+
+        errorLogOut.println("----------------------------------------------------------------------------" + "\n" + "Number Errors:");
+
         String num1 = "";
         String num2 = "";
 
@@ -99,9 +115,11 @@ public class Main {
                     System.out.println("Your FIRST number " + "<" + numberOne + ">" + " is valid.");
 
                 } catch (NumberFormatException e) {
-                    System.out.println("The FIRST number is out or bound, please try again.");
+                    errorLogOut.println("First number is out of bounds: " + num1);
+                    System.out.println("The FIRST number is out of bounds, please try again.");
                 }
             } else {
+                errorLogOut.println("Invalid input for first number: " + num1);
                 System.out.println("The First number is NOT valid, please try again.");
             }
 
@@ -122,18 +140,23 @@ public class Main {
                     // Before parsing in the number into int type, get rid of "," between numbers
                     numberTwo = Integer.parseInt(num2.replace(",", ""));
                     isValidNum2 = true;
-                    System.out.println("Your FIRST number " + "<" + numberTwo + ">" + " is valid.");
+                    System.out.println("Your SECOND number " + "<" + numberTwo + ">" + " is valid.");
                 } catch (NumberFormatException e) {
-                    System.out.println("The FIRST number is out or bound, please try again.");
+                    errorLogOut.println("Second number is out of bounds: " + num2);
+                    System.out.println("The SECOND number is out of bounds, please try again.");
                 }
             } else {
-                System.out.println("The First number is NOT valid, please try again.");
+                errorLogOut.println("Invalid input for second number: " + num2);
+                System.out.println("The SECOND number is NOT valid, please try again.");
             }
         }
         return new int[]{numberOne, numberTwo};
     }
 
     public static String inputFileName () {
+
+        errorLogOut.println("----------------------------------------------------------------------------" + "\n" + "Input File Errors:");
+
         boolean isValidInput = false;
 
         String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$";
@@ -155,12 +178,14 @@ public class Main {
 
             if (isInputFileMatch) {
                 if (!inputFile.exists()) {
+                    errorLogOut.println("Input file does not exist: " + inputFileName);
                     System.out.println("This INPUT file does not exist, please try again.");
                 } else {
                     isValidInput = true;
                     System.out.println(inputFileName + " is a valid INPUT file name.");
                 }
             } else {
+                errorLogOut.println("Invalid input for input file name: " + inputFileName);
                 System.out.println("This INPUT file name is NOT valid, please try again.");
             }
         }
@@ -168,6 +193,9 @@ public class Main {
     }
 
     public static String outputFileName () {
+
+        errorLogOut.println("----------------------------------------------------------------------------" + "\n" + "Output File Errors:");
+
         String outputFileName = "";
         boolean isValidOutput = false;
 
@@ -189,12 +217,14 @@ public class Main {
             boolean isOutputFileMatch = inputFileMatch.matches();
             if (isOutputFileMatch) {
                 if (inputFileName.equals(outputFileName)) {
+                    errorLogOut.println("Output file name is the same as input file: " + outputFileName);
                     System.out.println("Output file name is the same as input file, please try again.");
                 } else {
                     isValidOutput = true;
                     System.out.println(outputFileName + " is a valid OUTPUT file name.");
                 }
             } else {
+                errorLogOut.println("Invalid input for output file name: " + outputFileName);
                 System.out.println("This OUTPUT file name is NOT valid, please try again.");
             }
         }
@@ -202,6 +232,9 @@ public class Main {
     }
 
     public static void passwordChecking() {
+
+        errorLogOut.println("----------------------------------------------------------------------------" + "\n" + "Password Errors:");
+
         String password = "";
         boolean isValidPS = false;
 
@@ -280,17 +313,21 @@ public class Main {
                             System.out.println("Passwords match!");
                         } else {
                             isValidPS = false;
+                            errorLogOut.println("Paswwords do not match: Original password: " + passwordFromFile + " Re-entered password: " + pass2String);
                             System.out.println("The passwords do not match, please try again.");
                         }
                     } catch (NoSuchAlgorithmException e) {
-                        System.out.println("No such Algorithm Exception.");
+                        errorLogOut.println("No such Algorithm Exception.");
+                        System.out.println("No such Algorithm Exception, please try again");
                     }
 
                 } catch (FileNotFoundException e) {
-                    System.out.println("File was not found.");
+                    errorLogOut.println("File was not found.");
+                    System.out.println("File was not found, please try again.");
                 }
 
             } else {
+                errorLogOut.println("Invalid input for password: " + password);
                 System.out.println("Your Password format is invalid.");
             }
 
@@ -313,6 +350,8 @@ public class Main {
     }
 
     public static void writeOutputFile(String outputFileName, String inputFileName, String name, int[] numbers) {
+
+        errorLogOut.println("----------------------------------------------------------------------------" + "\n" + "Writing to Output File Errors:");
 
         try {
             FileWriter outputFile = new FileWriter(outputFileName);
@@ -338,7 +377,8 @@ public class Main {
             System.out.println("\n" + "================================================================");
             System.out.println("Successfully wrote to designated output file.");
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            errorLogOut.println("IOException occured.");
+            System.out.println("An error occurred, please try again.");
         }
 
     }
