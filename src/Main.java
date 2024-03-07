@@ -11,6 +11,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
+
+    // need this to be here so output file method can compare
+    private static String inputFileName = "";
+    private static File inputFile = new File(inputFileName);
+
     public static void main(String[] args) {
         // Store the name that is checked
         String name = nameChecking();
@@ -21,7 +26,7 @@ public class Main {
         // Store output file name
         String outputFileName = outputFileName();
 
-        // Create an input file, check and confirm a password and store the hashed password inside of input file
+        // Store the hashed password and check and confirm with re-entered password
         passwordChecking();
 
         // Write all the required results in output file
@@ -129,7 +134,6 @@ public class Main {
     }
 
     public static String inputFileName () {
-        String inputFileName = "";
         boolean isValidInput = false;
 
         String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$";
@@ -147,9 +151,15 @@ public class Main {
             Matcher inputFileMatch = pattern.matcher(inputFileName);
             boolean isInputFileMatch = inputFileMatch.matches();
 
+            inputFile = new File(inputFileName);
+
             if (isInputFileMatch) {
-                isValidInput = true;
-                System.out.println(inputFileName + " is a valid INPUT file name.");
+                if (!inputFile.exists()) {
+                    System.out.println("This INPUT file does not exist, please try again.");
+                } else {
+                    isValidInput = true;
+                    System.out.println(inputFileName + " is a valid INPUT file name.");
+                }
             } else {
                 System.out.println("This INPUT file name is NOT valid, please try again.");
             }
@@ -161,7 +171,7 @@ public class Main {
         String outputFileName = "";
         boolean isValidOutput = false;
 
-        String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$";
+        String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}\\.txt$";
         Pattern pattern = Pattern.compile(regex);
 
         while (!isValidOutput) {
@@ -170,14 +180,20 @@ public class Main {
                 Step 4: Please input a valid name for your OUTPUT File:
                       - The file name can't include: <, >, :, ", /, \\, |, ?, *, !
                       - The file name must be shorter than 255 characters.
+                      - The file name must end with ".txt"
+                      - The file name can't be the same name as the input file.
                 ----------------------------------------------------------------------------""");
             Scanner outputScanner = new Scanner(System.in);
             outputFileName = outputScanner.nextLine();
             Matcher inputFileMatch = pattern.matcher(outputFileName);
             boolean isOutputFileMatch = inputFileMatch.matches();
             if (isOutputFileMatch) {
-                isValidOutput = true;
-                System.out.println(outputFileName + " is a valid OUTPUT file name.");
+                if (inputFileName.equals(outputFileName)) {
+                    System.out.println("Output file name is the same as input file, please try again.");
+                } else {
+                    isValidOutput = true;
+                    System.out.println(outputFileName + " is a valid OUTPUT file name.");
+                }
             } else {
                 System.out.println("This OUTPUT file name is NOT valid, please try again.");
             }
@@ -264,7 +280,7 @@ public class Main {
                             System.out.println("Passwords match!");
                         } else {
                             isValidPS = false;
-                            System.out.println("The passwords do not match. Try again.");
+                            System.out.println("The passwords do not match, please try again.");
                         }
                     } catch (NoSuchAlgorithmException e) {
                         System.out.println("No such Algorithm Exception.");
@@ -299,7 +315,7 @@ public class Main {
     public static void writeOutputFile(String outputFileName, String inputFileName, String name, int[] numbers) {
 
         try {
-            FileWriter outputFile = new FileWriter(outputFileName + ".txt");
+            FileWriter outputFile = new FileWriter(outputFileName);
             String[] splitName = name.split(" ");
             String firstName = splitName[0];
             String lastName = splitName[1];
@@ -314,8 +330,13 @@ public class Main {
             outputFile.write("Product of two integer: " + product + "\n");
             outputFile.write("Input file name: " + inputFileName + "\n");
             outputFile.write("Input file content:" + "\n");
+            Scanner readInputFile = new Scanner(inputFile);
+            while (readInputFile.hasNextLine()) {
+                outputFile.write(readInputFile.nextLine() + "\n");
+            }
             outputFile.close();
-            System.out.println("Successfully wrote to the file.");
+            System.out.println("\n" + "================================================================");
+            System.out.println("Successfully wrote to designated output file.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
         }
