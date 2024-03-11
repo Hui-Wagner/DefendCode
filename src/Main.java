@@ -1,3 +1,10 @@
+/**
+ * Group 3: Maria Babko, Alex Garcia, Hui Wagner
+ * Defend Your Code Assignment
+ * TCSS 483
+ * March 11, 2024
+ */
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.io.*;
