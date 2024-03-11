@@ -159,7 +159,7 @@ public class Main {
 
         boolean isValidInput = false;
 
-        String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}$";
+        String regex = "^[^<>:\"/\\\\|?*!\\x00-\\x1F]{1,255}\\.txt$";
         Pattern pattern = Pattern.compile(regex);
 
         while (!isValidInput) {
@@ -167,7 +167,9 @@ public class Main {
                 ============================================================================
                 Step 3: Please input a valid name for your INPUT File:
                       - The file name can't include: <, >, :, ", /, \\, |, ?, *, !
-                      - The file name must be shorter than 255 characters.
+                      - The file name must be shorter than 256 characters.
+                      - The file should be a .txt file
+                      - The file must be in this directory (DefendYourCode)
                 ----------------------------------------------------------------------------""");
             Scanner inputScanner = new Scanner(System.in);
             inputFileName = inputScanner.nextLine();
@@ -363,7 +365,7 @@ public class Main {
             outputFile.write("First Integer: " + String.valueOf(numbers[0]) + "\n");
             outputFile.write("Second Integer: " + String.valueOf(numbers[1])+ "\n");
             // Sum, Product, Input File Name, Input file contents
-            long sum = numbers[0] + numbers[1];
+            long sum = (long) numbers[0] + numbers[1];
             outputFile.write("Sum of two integers: " + sum + "\n");
             long product = (long) numbers[0] * numbers[1];
             outputFile.write("Product of two integer: " + product + "\n");
